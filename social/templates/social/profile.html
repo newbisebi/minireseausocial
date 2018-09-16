@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Profil{% endblock title %}
+
+{% block content %}
+    {% load static %}
+    <h2>Profil de {{ username }} </h2>
+
+
+    {% if statuts %}
+
+        {% for statut in statuts %}
+            <div class="statut">
+                <div class="ligne_avatar">
+                    <p class="avatar">
+                        <img src="{% static 'img/user_neutral.png' %}" alt="avatar utilisateur" width="50px">
+                    </p>
+                    <div class="info_statut">
+                        <p>
+                            <span class="auteur">{{ statut.auteur }}</span>
+                            {% if statut.message.destinataire  %}
+                                --> <span class="auteur"> {{ statut.message.destinataire }}</span>
+                            {% endif %}
+                        </p>
+                        <p class= "dateheure">
+                            {{ statut.date }}
+                        </p>
+                    </div>
+                </div>
+                <p class="texte_statut"> {{statut.texte }}</p>
+
+
+                <div class="zone_commentaires">
+                    {% for commentaire in statut.commentaire.all %}
+                        <div class = "commentaire">
+                            <p><span class="commentateur">{{ commentaire.auteur }}</span> : {{ commentaire.texte }}</p>
+                            <p class="dateheure">Il y a {{ commentaire.date|timesince }}</p>
+                        </div>
+                    {%endfor %}
+                    <form action="" method="post" class="form-inline">
+                        {% csrf_token %}
+                        {{ form }}
+                        <input type="hidden" name='statut_id' value= "{{ statut.pk }}" />
+                        <input type="submit" value="Envoyer" class="myButton"/>
+                    </form>
+                </div>
+
+
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Le mur de cet utilisateur est vide !</p>
+    {% endif %}
+
+
+    <h3><a href="{% url 'social_utilisateurs' %}">Retour à la liste des utilisateurs</a></h3>
+
+{% endblock %}
