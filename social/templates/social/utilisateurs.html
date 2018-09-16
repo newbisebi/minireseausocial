@@ -4,33 +4,57 @@
 
     <h2>Liste des utilisateurs</h2>
 
-    {% if utilisateurs %}
-        <ul>
-            {% for utilisateur in utilisateurs %}
-                <li>{{ utilisateur.user.username }} - <a class = "link_profil" href="{% url 'social_profile' utilisateur.id %}">Voir le profil</a></li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Il n'y a aucun utilisateur enregistré pour le moment !</p>
-        <p>Pour ajouter un nouvel utilisateur, rendez-vous dans l'interface d'administration.</p>
-    {% endif %}
+    <section>
+
+        {% if utilisateurs %}
+            <ul>
+                {% for utilisateur in utilisateurs %}
+                    <li>{{ utilisateur.user.username }} - <a class = "link_profil" href="{% url 'social_profile' utilisateur.id %}">Voir le profil</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Il n'y a aucun utilisateur enregistré pour le moment !</p>
+            <p>Pour ajouter un nouvel utilisateur, rendez-vous dans l'interface d'administration.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        {% if is_paginated %}
+            <div class="pagination">
+               {% if page_obj.has_previous %}
+                   <a href="?page={{ page_obj.previous_page_number }}">Précédente</a> —
+               {% endif %}
+               Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}
+               {% if page_obj.has_next %}
+                  — <a href="?page={{ page_obj.next_page_number }}">Suivante</a>
+               {% endif %}
+            </div>
+        {% endif %}
+    </section>
+
+    <section>
+        <a href="{% url 'registration' %}">
+            <div class="myButton">
+                Ajouter un utilisateur
+            </div>
+        </a>
+    </section>
+
+    <section>
+        <a href="{% url 'connexion' %}">
+            <div class="myButton">
+                Se connecter
+            </div>
+        </a>
+    </section>
+
+    <section>
+        <a href="{% url 'deconnexion' %}">
+            <div class="myButton">
+                Se déconnecter
+            </div>
+        </a>
+    </section>
 
 
-    <a href="{% url 'registration' %}">
-        <div class="myButton">
-            Ajouter un utilisateur
-        </div>
-    </a>
-
-    {% if is_paginated %}
-        <div class="pagination">
-           {% if page_obj.has_previous %}
-               <a href="?page={{ page_obj.previous_page_number }}">Précédente</a> —
-           {% endif %}
-           Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}
-           {% if page_obj.has_next %}
-              — <a href="?page={{ page_obj.next_page_number }}">Suivante</a>
-           {% endif %}
-        </div>
-    {% endif %}
 {% endblock %}

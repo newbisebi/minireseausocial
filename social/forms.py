@@ -10,7 +10,7 @@ class CommentForm(forms.Form):
     statut_id = forms.CharField(widget=forms.HiddenInput())
 
 class RegistrationForm(forms.Form):
-    username = forms.CharField(max_length=50, label="Nom d'utilisateur")
+    username = forms.CharField(max_length=30, label="Nom d'utilisateur")
     password = forms.CharField(max_length=100, label="Mot de Passe", widget=forms.PasswordInput)
     confirm_pw = forms.CharField(max_length=100, label="Confirmez le mot de Passe", widget=forms.PasswordInput)
     avatar = forms.ImageField(required=False)
@@ -33,3 +33,6 @@ class RegistrationForm(forms.Form):
 
         return cleaned_data
 
+class ConnexionForm(forms.Form):
+    username = forms.CharField(label="Nom d'utilisateur", max_length=30)
+    password = forms.CharField(label="Mot de passe", widget=forms.PasswordInput)

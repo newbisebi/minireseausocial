@@ -12,6 +12,8 @@ urlpatterns = [
     # re_path(r'^utilisateur/(?P<pk>\d+)$', views.Profile.as_view(), name = "social_profile"),
     re_path(r'^utilisateur/(?P<user_id>\d+)$', views.profile, name="social_profile"),
     re_path(r'^registration$', views.new_user, name = 'registration'),
+    re_path(r'^connexion$', views.connexion, name='connexion'),
+    re_path(r'^deconnexion$', views.deconnexion, name='deconnexion'),
 ]
 
 
