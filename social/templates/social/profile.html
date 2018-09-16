@@ -13,13 +13,17 @@
             <div class="statut">
                 <div class="ligne_avatar">
                     <p class="avatar">
-                        <img src="{% static 'img/user_neutral.png' %}" alt="avatar utilisateur" width="50px">
+                        {% if not statut.auteur.avatar %}
+                            <img src="{% static 'img/user_neutral.png' %}" alt="avatar utilisateur" width="50px">
+                        {% else %}
+                            <img src="{{ statut.auteur.avatar.url }}" alt="avatar utilisateur" width="50px">
+                        {% endif %}
                     </p>
                     <div class="info_statut">
                         <p>
-                            <span class="auteur">{{ statut.auteur }}</span>
+                            <span class="auteur">{{ statut.auteur.user.username }}</span>
                             {% if statut.message.destinataire  %}
-                                --> <span class="auteur"> {{ statut.message.destinataire }}</span>
+                                --> <span class="auteur"> {{ statut.message.destinataire.user.username }}</span>
                             {% endif %}
                         </p>
                         <p class= "dateheure">
@@ -33,7 +37,7 @@
                 <div class="zone_commentaires">
                     {% for commentaire in statut.commentaire.all %}
                         <div class = "commentaire">
-                            <p><span class="commentateur">{{ commentaire.auteur }}</span> : {{ commentaire.texte }}</p>
+                            <p><span class="commentateur">{{ commentaire.auteur.user.username }}</span> : {{ commentaire.texte }}</p>
                             <p class="dateheure">Il y a {{ commentaire.date|timesince }}</p>
                         </div>
                     {%endfor %}
