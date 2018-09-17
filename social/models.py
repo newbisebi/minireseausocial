@@ -44,6 +44,8 @@ class Commentaire(models.Model):
 
 #SIGNAUX
 @receiver(post_save, sender=User)
-def create_profile_for_user(sender, instance, **kwargs):
-    new_profile = Profil(user=instance)
-    new_profile.save()
+def create_profile_for_user(sender, instance, created, **kwargs):
+    if created==True:
+        print("DECLENCHEMENT SIGNAL")
+        new_profile = Profil(user=instance)
+        new_profile.save()
