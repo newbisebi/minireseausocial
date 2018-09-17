@@ -36,3 +36,10 @@ class RegistrationForm(forms.Form):
 class ConnexionForm(forms.Form):
     username = forms.CharField(label="Nom d'utilisateur", max_length=30)
     password = forms.CharField(label="Mot de passe", widget=forms.PasswordInput)
+
+class NewStatutForm(forms.Form):
+    texte = forms.CharField(
+        label='',
+        max_length=1000,
+        widget=forms.Textarea(attrs={'min-width':"100%", 'rows': "1", 'placeholder':'Des choses intéressantes à dire ? '}))
+

@@ -16,7 +16,26 @@
       <h1><a href="{% url 'social_utilisateurs' %}">OpenFaceRooms - Réseau Social d'Entreprise</a></h1>
       <a href="{% url 'admin:index' %}">Admin</a>
     </div>
+    {% if user.is_authenticated %}
+    <div class ="inside">
+      <p><i><small>Bonjour {{ user.username }} ! Vous êtes connecté·e.</small></i></p>
+    </div>
+    {% endif %}
+
   </header>
+
+  <nav class="inside">
+    <ul>
+      <li class=myButton><a href="{% url 'social_utilisateurs' %}">Accueil</a></li>
+      <li class=myButton><a href="{% url 'registration' %}">Créer un compte</a></li>
+      {% if user.is_authenticated and user.profil.id %}
+        <li class=myButton><a href="{% url 'social_profile' user.profil.id %}">Mon profil</a></li>
+        <li class=myButton><a href="{% url 'deconnexion' %}">Déconnexion</a></li>
+      {% else %}
+        <li class=myButton><a href="{% url 'connexion' %}">Connexion</a></li>
+      {% endif %}
+    </ul>
+  </nav>
 
   <div class="inside">
     {% block content %}{% endblock %}

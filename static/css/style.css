@@ -35,6 +35,15 @@ p{
     margin:0;
 }
 
+nav ul{
+    display:flex;
+    justify-content: center;
+}
+
+nav li{
+    display:inline;
+}
+
 footer{
     background-image: url("../img/header.jpg");
     color:#fff;
@@ -60,8 +69,13 @@ footer p{
     font-size: smaller;
 }
 
+ul{
+    padding:0;
+}
+
 li{
     margin:5px;
+    margin-right: 0;
 }
 
 .auteur{
@@ -173,4 +187,9 @@ section{
 .myButton:active {
     position:relative;
     top:1px;
+}
+
+.myButton a{
+    text-decoration: none;
+    color:#fff;
 }

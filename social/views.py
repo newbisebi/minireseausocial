@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
 from django.db.models import Q
-from .models import Statut, Commentaire, Profil
-from .forms import CommentForm, RegistrationForm, ConnexionForm
+from .models import Statut, Commentaire, Profil, Message
+from .forms import CommentForm, RegistrationForm, ConnexionForm, NewStatutForm
 import datetime
 
 
@@ -28,47 +28,72 @@ class ListeUtilisateurs(ListView):
 #             Q(auteur.id = pk) | Q(destinataire.id = pk)
 #         )
 
-def profile(request, user_id):
-    form = CommentForm(request.POST or None)
+def profile(request, profile_id):
 
-    if form.is_valid():
-        texte = form.cleaned_data['texte']
-        statut_id = form.cleaned_data['statut_id']
-        statut = Statut.objects.get(id=statut_id)
+    if request.method == "POST" and "nouveau_commentaire" in request.POST:
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            texte = comment_form.cleaned_data['texte']
+            statut_id = comment_form.cleaned_data['statut_id']
+            statut = Statut.objects.get(id=statut_id)
 
-        try:
-            auteur = Profil.objects.get(user=request.user)
-        except(ObjectDoesNotExist, TypeError): #typeerror si anonymous user ==> voir meilleur moyen de le tester
-            visiteur = User.objects.get_or_create(username="visiteur·euse")[0]
-            auteur = Profil.objects.get_or_create(user=visiteur, statut="Non cadre")[0]
+            try:
+                auteur = Profil.objects.get(user=request.user)
+            except(ObjectDoesNotExist, TypeError): #typeerror si anonymous user ==> voir meilleur moyen de le tester
+                visiteur = User.objects.get_or_create(username="visiteur·euse")[0]
+                auteur = Profil.objects.get_or_create(user=visiteur, statut="Non cadre")[0]
 
-        commentaire = Commentaire(texte=texte, auteur=auteur, statut=statut)
-        commentaire.save()
-        form = CommentForm()
+            commentaire = Commentaire(texte=texte, auteur=auteur, statut=statut)
+            commentaire.save()
+            comment_form = CommentForm()
+    else:
+        comment_form = CommentForm()
 
+
+    if request.method == "POST" and "nouveau_statut" in request.POST:
+        message_form = NewStatutForm(request.POST)
+        if message_form.is_valid():
+            texte = message_form.cleaned_data['texte']
+            active_user = request.user
+            auteur = Profil.objects.get(user=active_user)
+            if auteur.id == int(profile_id): #on vérifie si il poste sur son propre mur ou celui d'un autre
+                statut = Statut(texte=texte, auteur=auteur)
+                statut.save()
+            else:
+                destinataire = Profil.objects.get(id=profile_id)
+                message = Message(texte=texte, auteur=auteur, destinataire=destinataire)
+                message.save()
+
+            message_form = NewStatutForm()
+    else:
+        message_form = NewStatutForm()
 
     statuts = Statut.objects.filter(
-            (Q(auteur_id = user_id) & Q(message__destinataire_id = None) ) #Statut posté par l'utilisateur sur son propre mur
-            | Q(message__destinataire_id = user_id) #Statuts postés par d'autres utilisateurs son sur mur
+            (Q(auteur_id = profile_id) & Q(message__destinataire_id = None) ) #Statut posté par l'utilisateur sur son propre mur
+            | Q(message__destinataire_id = profile_id) #Statuts postés par d'autres utilisateurs son sur mur
         ).order_by('-date')
-    username = Profil.objects.get(id=user_id).user.username
-    avatar = Profil.objects.get(id=user_id).avatar
+    username = Profil.objects.get(id=profile_id).user.username
+    avatar = Profil.objects.get(id=profile_id).avatar
     return render(request, 'social/profile.html', locals())
 
 def new_user(request):
-    form = RegistrationForm(request.POST or None, request.FILES)
-    if form.is_valid():
-        username = form.cleaned_data['username']
-        password = form.cleaned_data['password']
-        new_user = User(username=username)
-        new_user.set_password(password)
-        avatar = form.cleaned_data["avatar"]
-        print("AVATAR : ", avatar)
-        statut = form.cleaned_data["statut"]
-        new_user.save()
-        new_profil = Profil(user=new_user, avatar=avatar, statut=statut)
-        new_profil.save()
-
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST, request.FILES)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            new_user = User(username=username)
+            new_user.set_password(password)
+            avatar = form.cleaned_data["avatar"]
+            statut = form.cleaned_data["statut"]
+            new_user.save()
+            # Profil automatiquement créé par un signal
+            new_profil = Profil.objects.get(user=new_user)
+            new_profil.avatar = avatar
+            new_profil.statut = statut
+            new_profil.save()
+    else:
+        form = RegistrationForm()
 
     return render(request, 'social/registration.html', locals())
 

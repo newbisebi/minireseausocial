@@ -6,8 +6,24 @@
     {% load static %}
     <h2>Profil de {{ username }} </h2>
 
+    <section>
+        {% if user.is_authenticated %}
+            {% if user.username == username %}
+                <p> Poster un nouveau statut : </p>
+            {% else %}
+                <p> Envoyez un message à {{ username }}  </p>
+            {% endif %}
+            <form action="" method="post" class="form-inline">
+                {% csrf_token %}
+                {{ message_form }}
+                <input type="submit" name = "nouveau_statut" value="Envoyer" class="myButton"/>
+            </form>
+        {% endif %}
+    </section>
+
 
     {% if statuts %}
+        <section>
 
         {% for statut in statuts %}
             <div class="statut">
@@ -43,20 +59,26 @@
                     {%endfor %}
                     <form action="" method="post" class="form-inline">
                         {% csrf_token %}
-                        {{ form }}
+                        {{ comment_form }}
                         <input type="hidden" name='statut_id' value= "{{ statut.pk }}" />
-                        <input type="submit" value="Envoyer" class="myButton"/>
+                        <input type="submit" value="Envoyer" name="nouveau_commentaire" class="myButton"/>
                     </form>
                 </div>
 
 
             </div>
         {% endfor %}
+        </section>
     {% else %}
-        <p>Le mur de cet utilisateur est vide !</p>
+        <section>
+            <p>Le mur de cet utilisateur est vide !</p>
+        </section>
     {% endif %}
 
 
-    <h3><a href="{% url 'social_utilisateurs' %}">Retour à la liste des utilisateurs</a></h3>
+
+    <section>
+        <h3><a href="{% url 'social_utilisateurs' %}">Retour à la liste des utilisateurs</a></h3>
+    </section>
 
 {% endblock %}
