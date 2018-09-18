@@ -17,3 +17,4 @@ class UserTests(TestCase):
         user = User.objects.get(username='Paul', email='maxime@test.com')
         profile = Profil.objects.filter(user=user)
         self.assertTrue(profile.exists())
+
