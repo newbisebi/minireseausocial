@@ -92,6 +92,7 @@ def new_user(request):
             new_profil.avatar = avatar
             new_profil.statut = statut
             new_profil.save()
+            form = RegistrationForm()
     else:
         form = RegistrationForm()
 
